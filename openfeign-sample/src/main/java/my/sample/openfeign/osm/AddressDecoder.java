@@ -1,5 +1,6 @@
 package my.sample.openfeign.osm;
 
+import lombok.EqualsAndHashCode;
 import lombok.Setter;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +25,7 @@ public interface AddressDecoder {
     @RequestMapping(method = GET, path = "/search?format=json", consumes = APPLICATION_JSON_VALUE)
     List<Coordinate> decode(@RequestParam("q") PostalCode postalCode);
 
+    @EqualsAndHashCode
     final class PostalCode {
 
         private final String value;

@@ -26,12 +26,16 @@ public interface DistanceOperations {
     @ToString
     final class PointDistance {
 
-        public final String postalCode;
-        public final Double distance;
+        private final String postalCode;
+        private final Double distance;
 
         public PointDistance(String postalCode, Double distance) {
             this.postalCode = requireNonNull(postalCode, "postalCode cannot be null");
             this.distance = distance;
+        }
+
+        public Double distance() {
+            return distance;
         }
     }
 }
