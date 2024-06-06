@@ -28,18 +28,11 @@ public class CLI implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        List<PointDistance> distances = distanceOperations.distances(new DistanceRequest(
-                new PostalCode("DN31+2AB"),
-                Arrays.asList(
-                        new PostalCode("DN32+7QL"),
-                        new PostalCode("DN35+8EB")
-                )
-        ));
+        // no cache
+        submit();
 
-        log.info("=========================================================");
-        log.info("Here is the map: (DN31 2AB) \uD83D\uDE80 (DN32 7QL), (DN35 8EB)");
-        log.info("{}", distances);
-        log.info("=========================================================");
+        // from cache
+        submit();
 //
 //        List<AddressDecoder.Coordinate> startCoordinates = addressDecoder.decode("DN31+2AB");
 //        List<AddressDecoder.Coordinate> endPoint1Coordinates = addressDecoder.decode("DN32+7QL");
@@ -59,5 +52,20 @@ public class CLI implements CommandLineRunner {
 //        log.info("{}", distancesResponse);
 //        log.info("distances: ({}) => ({}), ({})", distancesResponse.distanceBy(0), distancesResponse.distanceBy(1), distancesResponse.distanceBy(2));
 //        log.info("=========================================================");
+    }
+
+    private void submit() {
+        List<PointDistance> fromCache = distanceOperations.distances(new DistanceRequest(
+                new PostalCode("DN31+2AB"),
+                Arrays.asList(
+                        new PostalCode("DN32+7QL"),
+                        new PostalCode("DN35+8EB")
+                )
+        ));
+
+        log.info("=========================================================");
+        log.info("Here is the map: (DN31 2AB) \uD83D\uDE80 (DN32 7QL), (DN35 8EB)");
+        log.info("{}", fromCache);
+        log.info("=========================================================");
     }
 }

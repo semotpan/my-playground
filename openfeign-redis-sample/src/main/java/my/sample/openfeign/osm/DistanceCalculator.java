@@ -1,11 +1,14 @@
 package my.sample.openfeign.osm;
 
+import lombok.EqualsAndHashCode;
 import lombok.Setter;
 import my.sample.openfeign.osm.AddressDecoder.Coordinate;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,10 +22,12 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 )
 public interface DistanceCalculator {
 
+    @Cacheable(value = "drivingDistances")
     @GetMapping(path = "/table/v1/driving/{drivingPath}?annotations=distance", consumes = APPLICATION_JSON_VALUE)
     DistancesResponse drivingDistances(@PathVariable("drivingPath") DrivingPath drivingPath);
 
-    final class DrivingPath {
+    @EqualsAndHashCode
+    final class DrivingPath implements Serializable {
 
         public final List<Coordinate> coordinates;
 
@@ -39,7 +44,8 @@ public interface DistanceCalculator {
     }
 
     @Setter // used by deserialization
-    final class DistancesResponse {
+    @EqualsAndHashCode
+    final class DistancesResponse implements Serializable{
 
         private Double[][] distances;
 

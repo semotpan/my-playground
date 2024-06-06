@@ -2,10 +2,12 @@ package my.sample.openfeign.osm;
 
 import lombok.EqualsAndHashCode;
 import lombok.Setter;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.io.Serializable;
 import java.util.List;
 
 import static java.util.Objects.requireNonNull;
@@ -22,11 +24,12 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 )
 public interface AddressDecoder {
 
+    @Cacheable(value = "postcodeCoordinates")
     @RequestMapping(method = GET, path = "/search?format=json", consumes = APPLICATION_JSON_VALUE)
     List<Coordinate> decode(@RequestParam("q") PostalCode postalCode);
 
     @EqualsAndHashCode
-    final class PostalCode {
+    final class PostalCode implements Serializable {
 
         private final String value;
 
@@ -41,7 +44,8 @@ public interface AddressDecoder {
     }
 
     @Setter
-    class Coordinate {
+    @EqualsAndHashCode
+    class Coordinate implements Serializable {
         String lat;
         String lon;
 
