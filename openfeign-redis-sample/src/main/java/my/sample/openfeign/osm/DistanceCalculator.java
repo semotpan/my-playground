@@ -22,7 +22,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 )
 public interface DistanceCalculator {
 
-    @Cacheable(value = "drivingDistances")
+    @Cacheable(value = "drivingDistances", unless = "#result == null")
     @GetMapping(path = "/table/v1/driving/{drivingPath}?annotations=distance", consumes = APPLICATION_JSON_VALUE)
     DistancesResponse drivingDistances(@PathVariable("drivingPath") DrivingPath drivingPath);
 

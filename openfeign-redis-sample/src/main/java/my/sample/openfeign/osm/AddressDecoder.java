@@ -24,7 +24,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 )
 public interface AddressDecoder {
 
-    @Cacheable(value = "postcodeCoordinates")
+    @Cacheable(value = "postcodeCoordinates", unless = "#result == null OR #result.isEmpty()")
     @RequestMapping(method = GET, path = "/search?format=json", consumes = APPLICATION_JSON_VALUE)
     List<Coordinate> decode(@RequestParam("q") PostalCode postalCode);
 
