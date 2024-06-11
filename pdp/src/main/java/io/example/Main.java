@@ -1,8 +1,10 @@
 package io.example;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
@@ -13,34 +15,46 @@ import static io.example.csv.CSVParser.simpleCSVParser;
 public class Main {
 
     public static void main(String[] args) throws IOException, ExecutionException, InterruptedException {
+//
+//        CompletableFuture<Collection<Employee>> csvParallel = CompletableFuture.supplyAsync(
+//                () -> parallelCSVParser("customers-100000.csv", nameParser()).values());
+//
+//        CompletableFuture<Collection<Employee>> csvSimple = CompletableFuture.supplyAsync(
+//                () -> simpleCSVParser("customers-100000.csv", nameParser()).values());
+//
+//        EmployeeRepository repository = new EmployeeRepository();
+//
+//        CompletableFuture.allOf(csvParallel, csvSimple)
+//                .thenRun(() -> {
+//                    try {
+//                        var employeesParallel = csvParallel.get();
+//
+//                        Collection<Employee> batch = new LinkedList<>();
+//                        for (Employee employee : employeesParallel) {
+//                            if (batch.size() == 25) {
+//                                repository.add(batch);
+//                                batch.clear();
+//                            }
+//                            batch.add(employee);
+//                        }
+//                    } catch (InterruptedException | ExecutionException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                })
+//                .get();
 
-        CompletableFuture<Collection<Employee>> csvParallel = CompletableFuture.supplyAsync(
-                () -> parallelCSVParser("customers-2000000.csv", nameParser()).values());
+        // Example usage:
+        List<Integer> items = new ArrayList<>();
+        for (int i = 1; i <= 2000; i++) {
+            items.add(i);
+        }
 
-        CompletableFuture<Collection<Employee>> csvSimple = CompletableFuture.supplyAsync(
-                () -> simpleCSVParser("customers-2000000.csv", nameParser()).values());
+        ItemPartitioner<Integer> partitioner = new ItemPartitioner<>(items);
+        List<List<Integer>> partitions = partitioner.partitions();
 
-        EmployeeRepository repository = new EmployeeRepository();
-
-        CompletableFuture.allOf(csvParallel, csvSimple)
-                .thenRun(() -> {
-                    try {
-                        var employeesParallel = csvParallel.get();
-
-                        Collection<Employee> batch = new LinkedList<>();
-                        for (Employee employee : employeesParallel) {
-                            if (batch.size() == 25) {
-                                repository.add(batch);
-                                batch.clear();
-                            }
-                            batch.add(employee);
-                        }
-                    } catch (InterruptedException | ExecutionException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
-                .get();
-
+        for (List<Integer> partition : partitions) {
+            System.out.println(partition);
+        }
     }
 
     static Function<String[], Employee> nameParser() {
