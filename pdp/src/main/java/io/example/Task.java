@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
-public class Task<T> implements Callable<Long> {
+public final class Task<T> implements Callable<Long> {
 
     private static final Logger logger = LogManager.getLogger(Task.class);
 
@@ -26,7 +26,6 @@ public class Task<T> implements Callable<Long> {
 
     @Override
     public Long call() throws Exception {
-
         logger.info("Starting task partition '{}' thread: '{}', items size: {}",
                 partition, Thread.currentThread().getName(), items.size());
         var startTime = System.nanoTime();
@@ -43,7 +42,7 @@ public class Task<T> implements Callable<Long> {
             }
 
             if (total % 100 == 0) {
-                logger.info("Task partition '{}' thread: '{}', executed: {}", partition, Thread.currentThread().getName(), total);
+                logger.info("Task partition '{}' thread: '{}', executed: {}, remaining {}", partition, Thread.currentThread().getName(), total, items.size()-total);
             }
          }
 

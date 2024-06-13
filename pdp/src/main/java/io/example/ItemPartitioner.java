@@ -18,13 +18,13 @@ public class ItemPartitioner<T> {
         int availableProcessors = Runtime.getRuntime().availableProcessors();
         this.partitions = new ArrayList<>(availableProcessors);
 
-        int partSize = (int) Math.ceil((double) items.size() / availableProcessors);
+        int partSize = items.size() / availableProcessors;
 
         List<T> itemList = new ArrayList<>(items);
         int start = 0, end = partSize;
         for (int part = 0; part < availableProcessors - 1; part++) {
             partitions.add(new ArrayList<>(itemList.subList(start, end)));
-            start = end - 1;
+            start = end;
             end += partSize;
         }
 
@@ -35,5 +35,12 @@ public class ItemPartitioner<T> {
 
     public List<List<T>> partitions() {
         return partitions;
+    }
+    public List<T> partition(int index) {
+        if (index < 0 || index >= partitions.size()) {
+            throw new IllegalArgumentException("Invalid partition index, allowed [0-%s]".formatted(partitions.size() - 1));
+        }
+
+        return partitions.get(index);
     }
 }
