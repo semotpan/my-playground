@@ -36,6 +36,7 @@ public class ItemPartitioner<T> {
     public List<List<T>> partitions() {
         return partitions;
     }
+
     public List<T> partition(int index) {
         if (index < 0 || index >= partitions.size()) {
             throw new IllegalArgumentException("Invalid partition index, allowed [0-%s]".formatted(partitions.size() - 1));

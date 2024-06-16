@@ -29,7 +29,7 @@ public final class BatchTask<T> implements Callable<Long> {
 
     @Override
     public Long call() throws Exception {
-        logger.info("Starting task partition '{}' thread: '{}', items size: {}",
+        logger.info("Starting batch task partition '{}' thread: '{}', items size: {}",
                 partition, Thread.currentThread().getName(), items.size());
         var startTime = System.nanoTime();
 
@@ -50,20 +50,22 @@ public final class BatchTask<T> implements Callable<Long> {
                 runnable.accept(new ArrayList<>(batchItems));
                 success += batchItems.size();
             } catch (Exception ex) {
-                logger.error("Failed to execute partition: {}, thread: {} item: {}", partition, Thread.currentThread().getName(), batchItems, ex);
+                logger.error("Failed to execute batch task partition: {}, thread: {} item: {}",
+                        partition, Thread.currentThread().getName(), batchItems, ex);
                 failure += batchItems.size();
             }
 
             batchItems.clear();
-            if (logStop == 10000) {
+            if (logStop == 1000) {
                 logStop = 0;
-                logger.info("Task partition '{}' thread: '{}', executed: {}, remaining {}", partition, Thread.currentThread().getName(), total, items.size() - total);
+                logger.info("Batch task partition '{}' thread: '{}', executed: {}, remaining {}",
+                        partition, Thread.currentThread().getName(), total, items.size() - total);
             }
         }
 
         var endTime = System.nanoTime();
 
-        logger.info("Completed  task partition '{}' thread: '{}', items size: {}, took '{}' seconds, successful: {}, failure: {}",
+        logger.info("Completed batch task partition '{}' thread: '{}', items size: {}, took '{}' seconds, successful: {}, failure: {}",
                 partition, Thread.currentThread().getName(), items.size(), SECONDS.convert(endTime - startTime, NANOSECONDS),
                 success, failure);
 

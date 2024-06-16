@@ -30,19 +30,25 @@ public final class Task<T> implements Callable<Long> {
                 partition, Thread.currentThread().getName(), items.size());
         var startTime = System.nanoTime();
 
+        int logStop = 0;
         long total = 0L, success = 0L, failure = 0L;
         for (T item : items) {
             total++;
+            logStop++;
+
             try {
                 runnable.accept(item);
                 success++;
             } catch (Exception ex) {
-                logger.error("Failed to execute partition: {}, thread: {} item: {}", partition, Thread.currentThread().getName(), item, ex);
+                logger.error("Failed to execute task partition: {}, thread: {} item: {}",
+                        partition, Thread.currentThread().getName(), item, ex);
                 failure++;
             }
 
-            if (total % 100 == 0) {
-                logger.info("Task partition '{}' thread: '{}', executed: {}, remaining {}", partition, Thread.currentThread().getName(), total, items.size()-total);
+            if (logStop == 1000) {
+                logStop = 0;
+                logger.info("Task partition '{}' thread: '{}', executed: {}, remaining {}",
+                        partition, Thread.currentThread().getName(), total, items.size()-total);
             }
          }
 
